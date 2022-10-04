@@ -1,16 +1,19 @@
 <?php
 
+ini_set('display_errors', 1);
+
 require 'vendor/autoload.php';
 require 'S3.class.php';
 require 'twig_filters.php';
 
 $ini_array = parse_ini_file("config.ini");
 
-if (array_key_exists("access_key", $ini_array) and array_key_exists("secret_key", $ini_array)) {
-    $access_key = $ini_array["access_key"];
-    $secret_key = $ini_array["secret_key"];
+if (isset($ini_array['access_key']) && isset($ini_array['access_key']) && isset($ini_array['bucket'])) {
+  $access_key = $ini_array["access_key"];
+  $secret_key = $ini_array["secret_key"];
+  $bucket = $ini_array["bucket"];
 } else {
-    die("Please set access_key and secret_key in config.ini file.");
+  die("Please set access_key, secret_key and bucket in config.ini file.");
 }
 
 $loader = new Twig_Loader_Filesystem('templates');
@@ -20,19 +23,14 @@ $twig->addFilter($filter_format_bytes);
 $twig->addFilter($filter_table_selected);
 $twig->addFilter($filter_format_datetime);
 
-$s3 = new S3($access_key, $secret_key);
+$bucket = $ini_array["bucket"];
 
-if (array_key_exists("bucket", $ini_array) and $ini_array["bucket"] != "") {
-    $buckets = NULL;
-    $selected_bucket = $ini_array["bucket"];
-} else {
-    $buckets = $s3->listBuckets();
-
-    if(isset($_POST["bucket"]))
-        $selected_bucket = $_POST["bucket"];
-    else
-        $selected_bucket = $buckets[0]["Name"];
+if(isset($ini_array['region'])){
+  $region = $ini_array['region'];
+  $s3 = new S3($access_key, $secret_key, $region);
+}else{
+  $s3 = new S3($access_key, $secret_key);
 }
 
-$objects = $s3->listObjects($selected_bucket);
-echo $twig->render('index.html', array("buckets" => $buckets, "objects" => $objects));
+$objects = $s3->listObjects($bucket);
+echo $twig->render('index.html', array("objects" => $objects));

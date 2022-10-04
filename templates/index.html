@@ -2,19 +2,6 @@
 
 {% block title %}S3 Explorer{% endblock %}
 
-{% block select_buckets %}
-{% if buckets %}
-<form method="post" id="form_buckets" class="ink-form">
-    <label>Bucket</label>
-    <select name="bucket" id="bucket" onchange="this.form.submit()">
-    {% for bucket in buckets %}
-        <option {{ bucket.Name | selected }}>{{ bucket.Name }}</option>
-    {% endfor %}
-    </select>
-</form>
-{% endif %}
-{% endblock %}
-
 {% block objects %}
     <table id="table_objects" class="display">
         <thead>
