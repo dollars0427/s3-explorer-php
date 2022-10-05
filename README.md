@@ -14,13 +14,14 @@ A browser for Amazon S3 written in PHP.
         composer install
 
 3. Set your access key and secret key in config.ini
-4. Optionally set a specific bucket in config.ini to disable the bucket selection field and list only objects from this bucket
+4. Set a specific bucket and region in config.in
 
 Example of config.ini:
-        
+
         access_key = (your access key)
         secret_key = (your secret key)
         bucket = my_bucket
+        region = (your bucket region)
 
 ## License
 
