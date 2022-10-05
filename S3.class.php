@@ -19,7 +19,6 @@ class S3 {
 
   function listBuckets() {
     $result = self::$client->listBuckets();
-    var_dump($result);
     return $result['Buckets'];
   }
 
@@ -40,7 +39,12 @@ class S3 {
   }
 
   function getObjectUrl($bucket, $keyname) {
-    return self::$client->getObjectUrl($bucket, $keyname, '+30 minutes');
+    $cmd = self::$client->getCommand('GetObject', [
+      'Bucket' => $bucket,
+      'Key' => $keyname
+    ]);
+    $request = self::$client->createPresignedRequest($cmd, '+30 minutes');
+    return (string)$request->getUri();
   }
 
 }
